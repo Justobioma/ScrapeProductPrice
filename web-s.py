@@ -1,0 +1,26 @@
+from selenium import webdriver
+from bs4 import BeautifulSoup
+import pandas as pd
+
+driver = webdriver.Chrome(executable_path = r'C:\Users\Default\AppData\Local\Pythoncodes\chromedriver.exe')
+
+products=[] #List to store name of the product
+prices=[] #List to store price of the product
+ratings=[] #List to store rating of the product
+
+driver.get("https://www.flipkart.com/televisions/pr?sid=ckf,czl&p[]=facets.smart_tv%255B%255D%3DYes&p[]=facets.resolution%255B%255D%3DUltra%2BHD%2B%25284K%2529&otracker=categorytree")
+
+content = driver.page_source
+soup = BeautifulSoup(content, 'html.parser')
+for a in soup.findAll('a',href=True, attrs={'class':'_31qSD5'}):
+    name=a.find('div', attrs={'class':'_3wU53n'})
+    price=a.find('div', attrs={'class':'_1vC4OE _2rQ-NK'})
+    rating=a.find('div', attrs={'class':'hGSR34'})
+    products.append(name.text)
+    prices.append(price.text)
+    #ratings.append(rating.text)
+    #ratings = soup.append(rating)
+    #ratings.text
+
+df = pd.DataFrame({'Product Name':products,'Price':prices})
+df.to_csv('products.csv', index=False, encoding='utf-8')
